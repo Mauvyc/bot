@@ -62,7 +62,7 @@ app.post("/send-message", async (req, res) => {
       return res.status(400).json({ success: false, error: "Comando no proporcionado." });
     }
 
-    const targetUsername = "@Mibotcamara_bot"; // Nombre de usuario del bot
+    const targetUsername = "@Grupotwobot"; // Nombre de usuario del bot
 
     // Envía el comando al bot de Telegram
     await client.sendMessage(targetUsername, {
@@ -86,10 +86,10 @@ app.get("/get-image-urls", async (req, res) => {
       
         // Verificar si el mensaje es del usuario específico y contiene una imagen
         if (
-          message.sender?.username === "Mibotcamara_bot" && // Filtra por el usuario específico
+          message.sender?.username === "Grupotwobot" && // Filtra por el usuario específico
           message.media instanceof Api.MessageMediaPhoto
         ) {
-          console.log("Imagen recibida de @Mibotcamara_bot.");
+          console.log("Imagen recibida de @Grupotwobot");
       
           // Obtener la URL de la imagen
           const file = await client.downloadMedia(message.media, {

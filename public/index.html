@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Linterna y Cámara</title>
+  <title>Control de Huellas</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,37 +23,34 @@
     button:hover {
       background-color: #0056b3;
     }
-    #imageContainer {
+    #deleteSection {
+      display: none;
       margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
     }
-    #imageContainer img {
-      width: 200px;
-      margin: 10px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    #deleteSection input {
+      padding: 5px;
+      margin-right: 10px;
+      width: 100px;
     }
   </style>
 </head>
 <body>
-  <h1>Control de Linterna y Cámara</h1>
+  <h1>Control de Huellas</h1>
 
-  <!-- Botón para encender la linterna -->
-  <button id="encenderLinternaBtn">Encender Linterna</button>
+  <!-- Botón para registrar huella -->
+  <button id="registrarHuellaBtn">Registrar Huella</button>
 
-  <!-- Botón para apagar la linterna -->
-  <button id="apagarLinternaBtn">Apagar Linterna</button>
+  <!-- Botón para verificar huella -->
+  <button id="verificarHuellaBtn">Verificar Huella</button>
 
-  <!-- Botón para tomar una foto -->
-  <button id="tomarFotoBtn">Tomar Foto</button>
+  <!-- Botón para eliminar huella -->
+  <button id="eliminarHuellaBtn">Eliminar Huella</button>
 
-  <!-- Botón para obtener fotos recibidas -->
-  <button id="obtenerFotosBtn">Obtener Fotos Recibidas</button>
-
-  <!-- Contenedor para mostrar las fotos recibidas -->
-  <div id="imageContainer"></div>
+  <!-- Sección para ingresar el ID al eliminar huella -->
+  <div id="deleteSection">
+    <input type="number" id="idInput" placeholder="ID (1-127)" min="1" max="127">
+    <button id="confirmarEliminarBtn">Confirmar</button>
+  </div>
 
   <script>
     // Función para enviar mensajes al servidor
@@ -78,50 +75,31 @@
       }
     }
 
-    // Función para obtener y mostrar las fotos recibidas
-    async function getReceivedImages() {
-      try {
-        const response = await fetch("/get-image-urls");
-        const data = await response.json();
+    // Evento para registrar huella
+    document.getElementById("registrarHuellaBtn").addEventListener("click", () => {
+      sendMessage("/registrarhuella");
+    });
 
-        if (data.success) {
-          const imageContainer = document.getElementById("imageContainer");
-          imageContainer.innerHTML = ""; // Limpiar el contenedor
+    // Evento para verificar huella
+    document.getElementById("verificarHuellaBtn").addEventListener("click", () => {
+      sendMessage("/verificarhuella");
+    });
 
-          data.imageUrls.forEach((url) => {
-            const img = document.createElement("img");
-            img.src = url;
-            img.style.width = "200px";
-            img.style.margin = "10px";
-            imageContainer.appendChild(img);
-          });
-        } else {
-          alert("Error al obtener las fotos.");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Error al obtener las fotos.");
+    // Evento para mostrar la sección de eliminar huella
+    document.getElementById("eliminarHuellaBtn").addEventListener("click", () => {
+      document.getElementById("deleteSection").style.display = "block";
+    });
+
+    // Evento para confirmar la eliminación de huella
+    document.getElementById("confirmarEliminarBtn").addEventListener("click", () => {
+      const id = document.getElementById("idInput").value;
+      if (id && id >= 1 && id <= 127) {
+        sendMessage(`/eliminarhuella ${id}`);
+        document.getElementById("deleteSection").style.display = "none"; // Ocultar sección
+        document.getElementById("idInput").value = ""; // Limpiar campo
+      } else {
+        alert("Ingrese un ID válido entre 1 y 127.");
       }
-    }
-
-    // Evento para encender la linterna
-    document.getElementById("encenderLinternaBtn").addEventListener("click", () => {
-      sendMessage("/activar_flash");
-    });
-
-    // Evento para apagar la linterna
-    document.getElementById("apagarLinternaBtn").addEventListener("click", () => {
-      sendMessage("/desactivar_flash");
-    });
-
-    // Evento para tomar una foto
-    document.getElementById("tomarFotoBtn").addEventListener("click", () => {
-      sendMessage("/tomar_foto");
-    });
-
-    // Evento para obtener fotos recibidas
-    document.getElementById("obtenerFotosBtn").addEventListener("click", () => {
-      getReceivedImages();
     });
   </script>
 </body>
