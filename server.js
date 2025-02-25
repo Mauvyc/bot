@@ -75,6 +75,7 @@ app.post("/send-message", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+// hola
 
 // Ruta para obtener las URLs de las imágenes recibidas de un usuario específico
 app.get("/get-image-urls", async (req, res) => {
