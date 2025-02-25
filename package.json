@@ -14,11 +14,13 @@
   "author": "danzok",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.0.2",
+    "audit": "^0.0.6",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "input": "^1.0.1",
     "moment-timezone": "^0.5.37",
     "ping": "^0.4.2",
     "simple-git": "^3.25.0",
-    "telegram": "^2.23.10"
+    "telegram": "^2.26.22"
   }
 }

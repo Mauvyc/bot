@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Linterna y Cámara</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #imageContainer {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #imageContainer img {
+      width: 200px;
+      margin: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <h1>Control de Linterna y Cámara</h1>
+
+  <!-- Botón para encender la linterna -->
+  <button id="encenderLinternaBtn">Encender Linterna</button>
+
+  <!-- Botón para apagar la linterna -->
+  <button id="apagarLinternaBtn">Apagar Linterna</button>
+
+  <!-- Botón para tomar una foto -->
+  <button id="tomarFotoBtn">Tomar Foto</button>
+
+  <!-- Botón para obtener fotos recibidas -->
+  <button id="obtenerFotosBtn">Obtener Fotos Recibidas</button>
+
+  <!-- Contenedor para mostrar las fotos recibidas -->
+  <div id="imageContainer"></div>
+
+  <script>
+    // Función para enviar mensajes al servidor
+    async function sendMessage(command) {
+      try {
+        const response = await fetch("/send-message", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ command }), // Envía el comando al servidor
+        });
+
+        if (response.ok) {
+          alert(`Comando "${command}" enviado correctamente.`);
+        } else {
+          alert(`Error al enviar el comando "${command}".`);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert(`Error al enviar el comando "${command}".`);
+      }
+    }
+
+    // Función para obtener y mostrar las fotos recibidas
+    async function getReceivedImages() {
+      try {
+        const response = await fetch("/get-image-urls");
+        const data = await response.json();
+
+        if (data.success) {
+          const imageContainer = document.getElementById("imageContainer");
+          imageContainer.innerHTML = ""; // Limpiar el contenedor
+
+          data.imageUrls.forEach((url) => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.style.width = "200px";
+            img.style.margin = "10px";
+            imageContainer.appendChild(img);
+          });
+        } else {
+          alert("Error al obtener las fotos.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al obtener las fotos.");
+      }
+    }
+
+    // Evento para encender la linterna
+    document.getElementById("encenderLinternaBtn").addEventListener("click", () => {
+      sendMessage("/activar_flash");
+    });
+
+    // Evento para apagar la linterna
+    document.getElementById("apagarLinternaBtn").addEventListener("click", () => {
+      sendMessage("/desactivar_flash");
+    });
+
+    // Evento para tomar una foto
+    document.getElementById("tomarFotoBtn").addEventListener("click", () => {
+      sendMessage("/tomar_foto");
+    });
+
+    // Evento para obtener fotos recibidas
+    document.getElementById("obtenerFotosBtn").addEventListener("click", () => {
+      getReceivedImages();
+    });
+  </script>
+</body>
+</html>
