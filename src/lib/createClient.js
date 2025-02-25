@@ -5,7 +5,7 @@ const { LogLevel } = require("telegram/extensions/Logger");
 const fs = require("fs");
 const Message = require("./Message");
 const EventEmitter = require("events");
-const {sendFile2} = require("./sendFile2");
+const {sendFile2} = require("./sendFIle2");
 
 async function createUrlFile(path, type = "image") {
   const result = new CustomFile(
